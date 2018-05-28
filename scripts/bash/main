@@ -1,0 +1,51 @@
+#!/bin/bash
+
+exec 2>&1
+
+export PATH=$PATH:/usr/local/bin
+SCRIPTPATH="$( cd "$(dirname "$0")/../../" ; pwd -P )"
+source $SCRIPTPATH/scripts/bash/text
+source $SCRIPTPATH/scripts/bash/docker
+
+main (){
+  project_name=${APP_NAME:-dev-env}
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  case "$1" in
+  "up")
+    docker_create_network
+    docker_compose_restart
+    ;;
+  "ensure-env-alive")
+    docker_create_network
+    docker_compose_up
+    ;;
+  "stop")
+    docker_compose_stop
+    docker_remove_network
+    ;;
+  "ps")
+    docker_compose_ps
+    ;;
+  "at")
+    docker_attach
+    ;;
+  "exec")
+    docker_exec ${@:2}
+    ;;
+  "log" | "logs")
+    docker_log
+    ;;
+  *)
+    docker_compose_ps $project_name $compose_file
+    echo ""
+    echo -e "===================== \e[46m Usage \e[0m =====================\n"
+    echo "./main ps        List containers"
+    echo "./main up        Start all containers"
+    echo "./main clean     Stop and destroy all containers"
+    echo "./main at        Attach containers"
+    echo "./main logs      Dump containers log"
+    ;;
+  esac
+}
+
+main ${@}

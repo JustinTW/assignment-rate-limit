@@ -1,0 +1,26 @@
+#!/bin/bash
+
+tty -s > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+  red=$(tput setaf 1)
+  green=$(tput setaf 2)
+  yellow=$(tput setaf 3)
+  blue=$(tput setaf 4)
+  reset=$(tput sgr0)
+fi
+
+print_success (){
+  printf "${green}$1${reset}"
+}
+
+print_warning (){
+  printf "${yellow}$1${reset}"
+}
+
+print_info (){
+  printf "${blue}$1${reset}"
+}
+
+print_error (){
+  printf "${red}$1${reset}"
+}

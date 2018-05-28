@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set_profile (){
+  CONFIG_FILE="/etc/profile.d/init-cache-dir.sh"
+  YARN_CACHE_FOLDER="/data/cache/yarn"
+  CCACHE_DIR="/data/cache/ccache"
+  mkdir -p "/etc/profile.d"
+
+  echo '#!/bin/sh' > $CONFIG_FILE
+  echo "mkdir -p /etc/profile.d $YARN_CACHE_FOLDER $CCACHE_DIR" >> $CONFIG_FILE
+  chmod +x $CONFIG_FILE
+
+  /bin/sh /etc/profile.d/init-cache-dir.sh
+}
+
+set_bashrc (){
+  CONFIG_FILE="$HOME/.bashrc"
+  YARN_CACHE_FOLDER="/data/cache/yarn"
+  CCACHE_DIR="/data/cache/ccache"
+  echo "mkdir -p $YARN_CACHE_FOLDER $CCACHE_DIR" >> $CONFIG_FILE
+}
+
+main (){
+  set_profile
+  set_bashrc
+}
+
+main

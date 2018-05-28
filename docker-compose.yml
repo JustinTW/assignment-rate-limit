@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile.${DOCKER_IMG}
+    image: web
+    container_name: web
+    hostname: ${DOCKER_IMG}
+    env_file:
+      - ./.env/cache.env
+      - ./.env/deploy.env
+    ports:
+      - 3000:3000
+    volumes:
+      - ./.docker/data/shared:/data/shared:rw
+      - ./.docker/data/cache:/data/cache:rw
+      - ./src:/src:rw
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        /sbin/init-scripts/*
+        tail -f /dev/null
+
+networks:
+  default:
+    external:
+      name: ${APP_NAME}

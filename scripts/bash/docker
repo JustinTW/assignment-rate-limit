@@ -1,0 +1,143 @@
+#!/bin/bash
+
+docker_chown (){
+  sudo chown $USER: ./.docker/data -R
+  sudo chown $USER: ./src -R
+}
+
+docker_create_network (){
+  network_name=${APP_NAME:-dev-env}
+  docker network ls | grep $network_name > /dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    docker network create $network_name > /dev/null 2>&1
+  fi
+}
+
+docker_remove_network (){
+  network_name=${APP_NAME:-dev-env}
+  docker network ls | grep $network_name > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    docker network rm $network_name > /dev/null 2>&1 || true
+  fi
+}
+
+docker_remove_container (){
+  for container in "$@"; do
+    print_warning "Destroy Container: "; echo $container
+    docker ps | grep $container > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      print_info "stop: "; docker stop -t 3 $container  || true
+    fi
+
+    docker ps -a | grep $container > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      print_info "rm: "; docker rm $container || true
+    fi
+  done
+  docker_chown
+}
+
+docker_compose_stop (){
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=`\
+    cat $compose_file \
+    | grep container_name: \
+    | awk '{print $2}' \
+    | sed ':a;N;$!ba;s/\n/ /g'`
+  docker_remove_container $containers
+  docker images --no-trunc | grep none > /dev/null 2>&1
+  if [ $? -eq 0 ]; then
+    docker images --no-trunc | grep none | awk '{print $3}' | xargs docker rmi -f
+  fi
+}
+
+docker_compose_ps (){
+  project_name=${APP_NAME:-dev-env}
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=$(docker-compose -p $project_name -f $compose_file ps -q)
+  if [[ $containers ]]; then
+    docker inspect \
+      --format='{{.Name}} runing={{.State.Running}}' \
+      $containers \
+      | grep runing=true > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      print_success "Running containers:"; echo ""
+      echo -e "Name\t\tStatus"; echo "=========================="
+      docker inspect \
+        --format='{{.Name}} runing={{.State.Running}} {{.State.Status}}' \
+        $containers \
+        | grep runing=true \
+        | sed 's/\///g' \
+        | awk '{print $1"\t"$3}'
+    fi
+    docker inspect \
+      --format='{{.Name}} runing={{.State.Running}}' \
+      $containers \
+      | grep runing=false > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      print_warning "Created but not running containers:"; echo ""
+      echo -e "Name\t\tStatus"; echo "=========================="
+      docker inspect \
+        --format='{{.Name}} runing={{.State.Running}} {{.State.Status}}' \
+        $containers \
+        | grep runing=false \
+        | awk '{print $1"\t\t"$3}'
+    fi
+  else
+    print_warning "No running or created containers !"; echo ""
+  fi
+}
+
+docker_compose_restart (){
+  project_name=${APP_NAME:-dev-env}
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  docker_compose_stop $compose_file
+  docker-compose -p $project_name -f $compose_file up --build -d
+  docker_compose_ps $project_name $compose_file
+}
+
+docker_compose_up (){
+  project_name=${APP_NAME:-dev-env}
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=$(docker-compose -p $project_name -f $compose_file ps -q)
+  if [[ $containers ]]; then
+    docker_compose_ps | grep exited > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      docker_compose_restart
+    fi
+  else
+    docker_compose_restart
+  fi
+  docker_chown
+}
+
+docker_attach (){
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=`\
+    cat $compose_file \
+    | grep container_name: \
+    | awk '{print $2}' \
+    | sed ':a;N;$!ba;s/\n/ /g'`
+  docker exec -it $(echo $containers | awk '{print $NF}') /bin/bash
+  docker_chown
+}
+
+docker_exec (){
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=`\
+    cat $compose_file \
+    | grep container_name: \
+    | awk '{print $2}' \
+    | sed ':a;N;$!ba;s/\n/ /g'`
+  docker exec -it $(echo $containers | awk '{print $NF}') ${@}
+}
+
+docker_log (){
+  compose_file=${COMPOSE_FILE:-docker-compose.yml}
+  containers=`\
+    cat $compose_file \
+    | grep container_name: \
+    | awk '{print $2}' \
+    | sed ':a;N;$!ba;s/\n/ /g'`
+  docker logs -f $(echo $containers | awk '{print $NF}')
+}

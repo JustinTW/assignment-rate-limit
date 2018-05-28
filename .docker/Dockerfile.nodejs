@@ -1,0 +1,18 @@
+FROM node:8.11.2-stretch
+
+ADD .docker/init-scripts /sbin/init-scripts
+RUN chmod +x /sbin/init-scripts/*
+
+ADD requirements/apt /tmp/apt
+RUN apt-get update && apt-get install -q -y --force-yes --fix-missing \
+  $(grep -vE "^\s*#" /tmp/apt  | tr "\n" " ") && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ADD requirements/yarn /tmp/yarn
+RUN yarn global add $(grep -vE "^\s*#" /tmp/yarn  | tr "\n" " ") && \
+  rm -rf /data/cache/yarn/* /tmp/yarn
+
+WORKDIR /src
+
+CMD bash /sbin/init-scripts/*; bash
