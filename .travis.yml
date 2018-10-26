@@ -13,4 +13,5 @@ addons:
 cache: yarn
 before_script: cd src
 script:
+  - yarn lint
   - yarn test
