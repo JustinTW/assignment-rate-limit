@@ -1,0 +1,8 @@
+# assignment-rate-limit robots.txt
+User-agent: *
+Allow: /
+Allow: /info/
+
+Disallow: /js/
+Disallow: /css/
+Disallow: /img/
