@@ -11,6 +11,11 @@ addons:
     packages:
       - g++-4.8
 cache: yarn
-before_script: cd src
+before_script:
+  - cd src
+  - yarn
 script:
+  - yarn lint
   - yarn test
+after_success:
+  - yarn coveralls

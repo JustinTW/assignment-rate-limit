@@ -1,8 +1,8 @@
+/* eslint-disable max-len, no-unused-vars, space-before-function-paren, func-names, arrow-parens */
 const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');
 const plumber = require('gulp-plumber');
 const livereload = require('gulp-livereload');
-
 
 gulp.task('develop', () => {
   livereload.listen();
@@ -10,8 +10,8 @@ gulp.task('develop', () => {
     script: 'bin/www',
     ext: 'js pug coffee',
     stdout: false
-  }).on('readable', function () {
-    this.stdout.on('data', (chunk) => {
+  }).on('readable', function() {
+    this.stdout.on('data', chunk => {
       if (/^Express server listening on port/.test(chunk)) {
         livereload.changed(__dirname);
       }
@@ -21,6 +21,4 @@ gulp.task('develop', () => {
   });
 });
 
-gulp.task('default', [
-  'develop'
-]);
+gulp.task('default', ['develop']);
