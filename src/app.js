@@ -9,6 +9,7 @@ const routes = require('./routes/index');
 const status = require('./routes/status');
 
 const rateLimit = require('./middleware/rate-limit');
+const MemoryStore = require('./middleware/rate-limit/memory-store');
 
 const app = express();
 
@@ -31,9 +32,13 @@ app.use(
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.enable('trust proxy');
+
+const store = new MemoryStore();
 const rateLimiter = rateLimit({
-  interval: 60, // 60 second
-  limit: 60 // 60 request
+  limit: 3,
+  window: 10,
+  store
 });
 
 app.use('/', rateLimiter, routes);
