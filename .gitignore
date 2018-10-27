@@ -2,4 +2,4 @@
 Thumbs.db
 .docker/data/shared/*
 .docker/data/cache/*
-
+src/.coveralls.yml
