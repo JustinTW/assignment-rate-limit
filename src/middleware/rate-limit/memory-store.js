@@ -5,6 +5,8 @@ function MemoryStore() {
   let lastRefillTimeStamp = {};
   /* eslint-disable-next-line */
   let requests = {};
+  /* eslint-disable-next-line */
+  let firstRequestTimeStamp = {};
   this.consume = (key, limit, window, cb) => {
     const now = Math.floor(Date.now() / 1000);
     const refillCountPerSecond = limit / window;
@@ -13,6 +15,7 @@ function MemoryStore() {
       availableTokens[key] = limit;
       lastRefillTimeStamp[key] = now;
       requests[key] = 0;
+      firstRequestTimeStamp[key] = now;
     }
 
     // refill tokens
@@ -29,6 +32,10 @@ function MemoryStore() {
         lastRefillTimeStamp[key] = now;
       }
 
+      if (now - firstRequestTimeStamp[key] >= window) {
+        requests[key] = 0;
+        firstRequestTimeStamp[key] = now;
+      }
       if (requests[key] >= limit) {
         requests[key] = 0;
       }
@@ -51,6 +58,7 @@ function MemoryStore() {
             (now - lastRefillTimeStamp[key])) *
           limit;
       }
+      firstRequestTimeStamp[key] = now;
       requests[key] = 0;
       return cb(Math.max(retryAfter, 1));
     }
