@@ -3,6 +3,10 @@
 [![Build Status](https://travis-ci.org/JustinTW/assignment-rate-limit.svg?branch=master)](https://travis-ci.org/JustinTW/assignment-rate-limit)
 [![Coverage Status](https://coveralls.io/repos/JustinTW/assignment-rate-limit/badge.svg?branch=master)](https://coveralls.io/r/JustinTW/assignment-rate-limit?branch=master)
 
+## Screenshot
+
+![Screenshot](/docs/screenshot.png?raw=true 'Rate Limit Demo Screenshot')
+
 ## Requirement
 
 - Docker >= 18.06.1-ce
