@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-/* eslint-disable-next-line no-unused-vars */
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -9,6 +8,9 @@ const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const status = require('./routes/status');
 
+const rateLimit = require('./middleware/rate-limit');
+const MemoryStore = require('./middleware/rate-limit/memory-store');
+
 const app = express();
 
 const env = process.env.NODE_ENV || 'development';
@@ -16,11 +18,10 @@ app.locals.ENV = env;
 app.locals.ENV_DEVELOPMENT = env === 'development';
 
 // view engine setup
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// app.use(favicon(__dirname + '/public/img/favicon.ico'));
+app.use(favicon(path.join(__dirname, '/public/img/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(
@@ -31,7 +32,16 @@ app.use(
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+app.enable('trust proxy');
+
+const store = new MemoryStore();
+const rateLimiter = rateLimit({
+  limit: 60,
+  window: 60,
+  store
+});
+
+app.use('/', rateLimiter, routes);
 app.use('/status', status);
 
 // catch 404 and forward to error handler
@@ -41,7 +51,7 @@ app.use((req, res, next) => {
   next(err);
 });
 
-// / error handlers
+// error handlers
 
 // development error handler
 // will print stacktrace

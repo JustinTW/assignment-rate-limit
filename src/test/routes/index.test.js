@@ -9,15 +9,15 @@ const httpMocks = require('node-mocks-http');
 const homeRouteHandler = require('../../routes');
 
 describe('Home page with rate limit', () => {
-  const expectedResponseTitle = 'rate-limit-demo';
-  it(`should render title: ${expectedResponseTitle} for index`, () => {
+  it('should response status code: 200', () => {
     const mockRequest = httpMocks.createRequest({ method: 'GET', url: '/' });
     const mockResponse = httpMocks.createResponse();
     homeRouteHandler(mockRequest, mockResponse);
-    const actualResponseTitle = mockResponse._getRenderData().title;
+    const actualResponseStatusCode = mockResponse._getStatusCode();
+    const expectedResponseStatusCode = 200;
     assert(
-      actualResponseTitle === expectedResponseTitle,
-      'title is not correct'
+      actualResponseStatusCode === expectedResponseStatusCode,
+      'Status code is not correct'
     );
   });
 });

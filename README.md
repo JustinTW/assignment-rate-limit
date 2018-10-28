@@ -23,7 +23,8 @@ cd assignment-rate-limit
 - method 1: using docker-compose
 
 ```
-docker-compose up -d
+env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
+docker-compose -f docker-compose.yml up --build -d
 docker exec -it web bash
 ```
 
