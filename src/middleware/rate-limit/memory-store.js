@@ -21,7 +21,7 @@ function MemoryStore() {
         refillCountPerSecond * (now - lastRefillTimeStamp[key])
       );
 
-      if (refillCount >= limit) {
+      if (refillCount >= 1) {
         availableTokens[key] = Math.min(
           limit,
           availableTokens[key] + refillCount
