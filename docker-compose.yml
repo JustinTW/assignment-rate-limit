@@ -23,6 +23,11 @@ services:
       - |
         /sbin/init-scripts/*
         tail -f /dev/null
+  redis:
+    container_name: redis
+    image: redis
+    volumes:
+      - ./.docker/data/redis:/data
 
 networks:
   default:

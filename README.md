@@ -1,7 +1,9 @@
-# Assignment: Rate Limit
+# Assignment: Rate Limit Demo
 
 [![Build Status](https://travis-ci.org/JustinTW/assignment-rate-limit.svg?branch=master)](https://travis-ci.org/JustinTW/assignment-rate-limit)
 [![Coverage Status](https://coveralls.io/repos/JustinTW/assignment-rate-limit/badge.svg?branch=master)](https://coveralls.io/r/JustinTW/assignment-rate-limit?branch=master)
+
+An implementation of rate limit on Express framework using token bucket algorithms backed by Redis database.
 
 ## Screenshot
 
