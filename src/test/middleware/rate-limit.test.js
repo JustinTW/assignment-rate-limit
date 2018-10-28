@@ -69,7 +69,7 @@ describe('rate-limit middleware', () => {
         setTimeout(() => {
           const req = request(app).get('/');
           const expectedLimit = limit;
-          const expectRemaining = limit - 1;
+          const expectRemaining = limit - 2;
           req
             .expect('X-Ratelimit-Limit', expectedLimit.toString())
             .expect('X-Ratelimit-Remaining', expectRemaining.toString())

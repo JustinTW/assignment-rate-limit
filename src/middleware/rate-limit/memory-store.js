@@ -17,7 +17,7 @@ function MemoryStore() {
       const refillCount = Math.floor(
         refillCountPerSecond * (now - lastRefillTimeStamp[key])
       );
-      if (refillCount >= 1) {
+      if (refillCount >= limit) {
         availableTokens[key] = Math.min(
           limit,
           availableTokens[key] + refillCount
@@ -33,9 +33,13 @@ function MemoryStore() {
     } else {
       let retryAfter;
       if (refillCountPerSecond >= 1) {
-        retryAfter = Math.floor(limit / refillCountPerSecond);
+        retryAfter =
+          Math.floor(limit / refillCountPerSecond) -
+          (now - lastRefillTimeStamp[key]);
       } else {
-        retryAfter = Math.floor(1 / refillCountPerSecond);
+        retryAfter =
+          Math.floor(1 / refillCountPerSecond) -
+          (now - lastRefillTimeStamp[key]);
       }
       return cb(retryAfter);
     }
