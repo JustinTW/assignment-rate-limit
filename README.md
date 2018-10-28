@@ -20,15 +20,14 @@ cd assignment-rate-limit
 
 ### Boot up and attach develop environment
 
-- method 1: using docker-compose
+- Method 1: using docker-compose
 
 ```
-env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
-  docker-compose -f docker-compose.yml up --build -d
+env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) docker-compose -f docker-compose.yml up --build -d
 docker exec -it web bash
 ```
 
-- method 2: using GUN Makefile
+- Method 2: using GUN Makefile
 
 ```
 make up
