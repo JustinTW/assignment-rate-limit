@@ -14,7 +14,7 @@ const RateLimit = options => {
       req.ip,
       limit,
       window,
-      (retryAfter, availableTokens, lastRefillTimeStamp) => {
+      (retryAfter, availableTokens, lastRefillTimeStamp, requests) => {
         const now = Math.floor(Date.now() / 1000);
         if (retryAfter) {
           res.setHeader('X-RateLimit-Reset', retryAfter + now);
@@ -24,13 +24,14 @@ const RateLimit = options => {
           return next(err);
         }
         const remaining = availableTokens;
-        const requests = limit - remaining;
+        const consume = limit - remaining;
         req.rateLimit = {
           limit,
           window,
           remaining,
-          requests,
-          lastRefillTimeStamp
+          consume,
+          lastRefillTimeStamp,
+          requests
         };
         res.setHeader('X-RateLimit-Limit', limit);
         res.setHeader('X-RateLimit-Window', window);

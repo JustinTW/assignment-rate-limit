@@ -36,8 +36,8 @@ app.enable('trust proxy');
 
 const store = new MemoryStore();
 const rateLimiter = rateLimit({
-  limit: 3,
-  window: 3,
+  limit: 60,
+  window: 60,
   store
 });
 
