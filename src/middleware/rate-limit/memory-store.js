@@ -38,6 +38,7 @@ function MemoryStore() {
       }
       if (requests[key] >= limit) {
         requests[key] = 0;
+        firstRequestTimeStamp[key] = now;
       }
     }
 
@@ -58,8 +59,8 @@ function MemoryStore() {
             (now - lastRefillTimeStamp[key])) *
           limit;
       }
-      firstRequestTimeStamp[key] = now;
       requests[key] = 0;
+      firstRequestTimeStamp[key] = now;
       return cb(Math.max(retryAfter, 1));
     }
 
