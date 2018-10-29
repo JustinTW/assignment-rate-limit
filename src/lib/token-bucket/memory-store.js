@@ -13,6 +13,10 @@ function MemoryStore(options) {
     return true;
   };
   this.consumeTokenBucket = (key, limit, i, now, cb) => {
+    // force err when limit is -1 for unittest
+    if (limit === -1) {
+      return cb('Fake Error');
+    }
     if (availableToken[key]) {
       availableToken[key] -= 1;
     } else {
