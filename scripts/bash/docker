@@ -2,6 +2,7 @@
 
 docker_chown (){
   sudo chown $USER: ./.docker/data -R
+  sudo chmod 777 ./.docker/data/redis -R
   sudo chown $USER: ./src -R
 }
 

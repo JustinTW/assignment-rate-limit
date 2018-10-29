@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+  redis:
+    container_name: redis
+    image: redis
+    volumes:
+      - ./.docker/data/redis:/data
   web:
     build:
       context: .

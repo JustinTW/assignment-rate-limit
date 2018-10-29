@@ -4,12 +4,12 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const redis = require('ioredis');
 
 const routes = require('./routes/index');
-const status = require('./routes/status');
 
+const TokenBucket = require('./lib/token-bucket');
 const rateLimit = require('./middleware/rate-limit');
-const MemoryStore = require('./middleware/rate-limit/memory-store');
 
 const app = express();
 
@@ -34,15 +34,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.enable('trust proxy');
 
-const store = new MemoryStore();
+const settings = { limit: 60, interval: 60 };
+const store = redis.createClient({ host: 'redis' });
+const limiter = new TokenBucket({ ...settings, store });
 const rateLimiter = rateLimit({
-  limit: 60,
-  window: 60,
-  store
+  ...settings,
+  limiter
 });
 
 app.use('/', rateLimiter, routes);
-app.use('/status', status);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

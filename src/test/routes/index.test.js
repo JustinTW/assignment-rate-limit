@@ -8,7 +8,7 @@ const assert = require('assert');
 const httpMocks = require('node-mocks-http');
 const homeRouteHandler = require('../../routes');
 
-describe('Home page with rate limit', () => {
+describe('Home page', () => {
   it('should response status code: 200', () => {
     const mockRequest = httpMocks.createRequest({ method: 'GET', url: '/' });
     const mockResponse = httpMocks.createResponse();
