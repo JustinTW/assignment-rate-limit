@@ -7,8 +7,6 @@ const bodyParser = require('body-parser');
 const redis = require('ioredis');
 
 const routes = require('./routes/index');
-
-const TokenBucket = require('./lib/token-bucket');
 const rateLimit = require('./middleware/rate-limit');
 
 const app = express();
@@ -35,11 +33,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.enable('trust proxy');
 
 const settings = { limit: 60, interval: 60 };
-const store = redis.createClient({ host: 'redis' });
-const limiter = new TokenBucket({ ...settings, store });
 const rateLimiter = rateLimit({
   ...settings,
-  limiter
+  store: redis.createClient({ host: 'redis' })
 });
 
 app.use('/', rateLimiter, routes);

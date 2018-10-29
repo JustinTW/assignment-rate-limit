@@ -24,7 +24,7 @@ const RateLimit = options => {
         return next(err);
       }
 
-      if (remaining <= 0) {
+      if (remaining < 0) {
         res.setHeader('X-RateLimit-Reset', interval + now);
         res.setHeader('Retry-After', interval);
         const resp = new Error('Too Many Requests');
