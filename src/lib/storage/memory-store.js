@@ -1,8 +1,4 @@
-const util = require('util');
-const fs = require('fs');
-const path = require('path');
 const defaults = require('defaults');
-const redis = require('ioredis');
 
 function MemoryStore(options) {
   options = defaults(options, { limit: 60, interval: 60 });

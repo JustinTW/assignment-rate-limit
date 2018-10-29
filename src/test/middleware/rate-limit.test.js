@@ -1,11 +1,9 @@
 /* eslint-env mocha */
 
 const express = require('express');
-const assert = require('assert');
 const request = require('supertest');
 const rateLimit = require('../../middleware/rate-limit.js');
 const MemoryStore = require('../../lib/storage/memory-store');
-const TokenBucket = require('../../lib/token-bucket');
 
 describe('rate-limit middleware', () => {
   const createWebApp = middleware => {
