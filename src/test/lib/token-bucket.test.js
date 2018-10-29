@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const TokenBucket = require('../../lib/token-bucket.js');
-const MemoryStore = require('../../lib/token-bucket/memory-store');
+const MemoryStore = require('../../lib/storage/memory-store');
 
 describe('token-bucket library', () => {
   it('should reduce one token', function() {

@@ -5,7 +5,7 @@ const defaults = require('defaults');
 const redis = require('ioredis');
 
 const luaScript = fs.readFileSync(
-  path.join(__dirname, './lua/token-bucket.lua'),
+  path.join(__dirname, './storage/redis-store.lua'),
   'utf8'
 );
 
