@@ -8,7 +8,7 @@ function MemoryStore(options) {
   this.defineCommand = (name, configs) => {
     return true;
   };
-  this.consumeTokenBucket = (key, limit, i, now, cb) => {
+  this.consumeToken = (key, limit, i, now, cb) => {
     // force err when limit is -1 for unittest
     if (limit === -1) {
       return cb('Fake Error');

@@ -14,14 +14,14 @@ function TokenBucket(options) {
   options.store = options.store || redis.createClient({ host: 'redis' });
 
   const { limit, interval, store } = options;
-  store.defineCommand('consumeTokenBucket', {
+  store.defineCommand('consumeToken', {
     numberOfKeys: 1,
     lua: luaScript
   });
 
   this.consume = (key, cb) => {
     return new Promise((resolve, reject) => {
-      store.consumeTokenBucket(
+      store.consumeToken(
         key,
         limit,
         interval * 1000,
