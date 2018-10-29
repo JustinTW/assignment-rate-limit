@@ -25,7 +25,7 @@ function MemoryStore(options) {
     if (availableToken[key] <= 0) {
       availableToken[key] = -1;
     }
-    cb(null, availableToken[key]);
+    return cb(null, availableToken[key]);
   };
 
   // export an API to allow availableToken all IPs to be reset
