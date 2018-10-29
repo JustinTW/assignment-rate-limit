@@ -29,16 +29,15 @@ cd assignment-rate-limit
 - Method 1: using docker-compose
 
 ```
-# setup redis folder permission
 mkdir -p .docker/data/redis
-sudo chmod 777 .docker/data/redis
+chmod 777 .docker/data/redis
 
 env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
   docker-compose -f docker-compose.yml up --build -d
 docker exec -it web bash
 ```
 
-- Method 2: using GUN Makefile
+- Method 2 (recommand): using GUN Makefile
 
 ```
 make up
