@@ -4,6 +4,8 @@ const express = require('express');
 const assert = require('assert');
 const request = require('supertest');
 const rateLimit = require('../../middleware/rate-limit.js');
+const MemoryStore = require('../../lib/storage/memory-store');
+const TokenBucket = require('../../lib/token-bucket');
 
 describe('rate-limit middleware', () => {
   const createWebApp = middleware => {
@@ -15,13 +17,16 @@ describe('rate-limit middleware', () => {
   };
 
   it('should set X-Ratelimit-Limit and X-Ratelimit-Remaining in response header', function(done) {
-    const limit = 7;
-    const interval = 5;
-    const app = createWebApp(rateLimit({ limit, interval }));
+    const settings = { limit: 7, interval: 5 };
+    const { limit, interval } = settings;
+    const rateLimiter = rateLimit({
+      ...settings,
+      store: new MemoryStore()
+    });
 
+    const app = createWebApp(rateLimiter);
     const expectedLimit = limit;
     const expectRemaining = limit - 1;
-
     const req = request(app).get('/');
     req
       .expect('X-Ratelimit-Limit', expectedLimit.toString())
@@ -31,9 +36,13 @@ describe('rate-limit middleware', () => {
   });
 
   it('should set X-Ratelimit-Reset and Retry-After in response header', function(done) {
-    const limit = 1;
-    const interval = 100;
-    const app = createWebApp(rateLimit({ limit, interval }));
+    const settings = { limit: 1, interval: 100 };
+    const { limit, interval } = settings;
+    const rateLimiter = rateLimit({
+      ...settings,
+      store: new MemoryStore()
+    });
+    const app = createWebApp(rateLimiter);
 
     request(app)
       .get('/')
@@ -53,16 +62,20 @@ describe('rate-limit middleware', () => {
   });
 
   it('should response content when next request is available', function(done) {
-    const limit = 60;
-    const interval = 60;
-    const app = createWebApp(rateLimit({ limit, interval }));
+    const settings = { limit: 60, interval: 60 };
+    const { limit, interval } = settings;
+    const rateLimiter = rateLimit({
+      ...settings,
+      store: new MemoryStore()
+    });
+    const app = createWebApp(rateLimiter);
 
     request(app)
       .get('/')
       .then(
         setTimeout(() => {
           const expectedLimit = limit;
-          const expectRemaining = limit - 3;
+          const expectRemaining = limit - 1;
           request(app)
             .get('/')
             .expect('X-Ratelimit-Limit', expectedLimit.toString())
@@ -74,9 +87,13 @@ describe('rate-limit middleware', () => {
   });
 
   it('should set correct Retry-After when token not available', function(done) {
-    const limit = 2;
-    const interval = 1;
-    const app = createWebApp(rateLimit({ limit, interval }));
+    const settings = { limit: 2, interval: 1 };
+    const { limit, interval } = settings;
+    const rateLimiter = rateLimit({
+      ...settings,
+      store: new MemoryStore()
+    });
+    const app = createWebApp(rateLimiter);
 
     request(app)
       .get('/')

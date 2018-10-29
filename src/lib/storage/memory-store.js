@@ -8,29 +8,33 @@ function MemoryStore(options) {
   options = defaults(options, { limit: 60, interval: 60 });
   const { interval } = options;
 
-  let requestsCounter = {};
+  let availableToken = {};
   this.defineCommand = (name, configs) => {
     return true;
   };
   this.consumeTokenBucket = (key, limit, i, now, cb) => {
-    if (requestsCounter[key]) {
-      requestsCounter[key] += 1;
+    // force err when limit is -1 for unittest
+    if (limit === -1) {
+      return cb('Fake Error');
+    }
+    if (availableToken[key]) {
+      availableToken[key] -= 1;
     } else {
-      requestsCounter[key] = 1;
+      availableToken[key] = limit - 1;
     }
-    if (requestsCounter[key] >= limit) {
-      requestsCounter[key] = 0;
+    if (availableToken[key] <= 0) {
+      availableToken[key] = -1;
     }
-    cb(null, requestsCounter[key]);
+    return cb(null, availableToken[key]);
   };
 
-  // export an API to allow requestsCounter all IPs to be reset
+  // export an API to allow availableToken all IPs to be reset
   this.reset = function() {
     const now = Math.floor(Date.now() / 1000);
-    requestsCounter = {};
+    availableToken = {};
   };
 
-  // simply reset ALL requestsCounter every interval
+  // simply reset ALL availableToken every interval
   const resetAll = setInterval(this.reset, interval);
   if (resetAll.unref) {
     resetAll.unref();
