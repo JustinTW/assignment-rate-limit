@@ -31,6 +31,7 @@ cd assignment-rate-limit
 ```
 mkdir -p .docker/data/redis
 chmod 777 .docker/data/redis
+docker network create assignment-rate-limit
 
 env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
   docker-compose -f docker-compose.yml up --build -d
