@@ -3,6 +3,7 @@ module.exports = {
   rules: {
     'comma-dangle': ['error', 'never'],
     'arrow-parens': 0,
+    'arrow-body-style': 0,
     'func-names': 0,
     'import/no-extraneous-dependencies': 0,
     'no-param-reassign': 0,

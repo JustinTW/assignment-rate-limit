@@ -6,9 +6,8 @@ const router = express.Router();
 router.get('/', (req, res) => {
   res.render('index', {
     title: 'rate-limit-demo',
-    consume: req.rateLimit.consume,
     remaining: req.rateLimit.remaining,
-    requests: req.rateLimit.requests
+    count: req.rateLimit.count
   });
 });
 

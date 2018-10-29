@@ -14,39 +14,33 @@ describe('rate-limit middleware', () => {
     return app;
   };
 
-  it('should set X-Ratelimit-Limit, X-Ratelimit-Remaining and X-Ratelimit-Reset in response header', function(done) {
+  it('should set X-Ratelimit-Limit and X-Ratelimit-Remaining in response header', function(done) {
     const limit = 7;
-    const window = 5;
-    const app = createWebApp(rateLimit({ limit, window }));
+    const interval = 5;
+    const app = createWebApp(rateLimit({ limit, interval }));
 
     const expectedLimit = limit;
     const expectRemaining = limit - 1;
 
     const req = request(app).get('/');
-
-    const now = Math.floor(Date.now() / 1000);
-    const expectedRest = (
-      now + Math.max(Math.floor(limit / window), 1)
-    ).toString();
     req
       .expect('X-Ratelimit-Limit', expectedLimit.toString())
       .expect('X-Ratelimit-Remaining', expectRemaining.toString())
-      // .expect('X-Ratelimit-reset', expectedRest)
       .expect(200, /response!/)
       .end(done);
   });
 
   it('should set X-Ratelimit-Reset and Retry-After in response header', function(done) {
     const limit = 1;
-    const window = 10;
-    const app = createWebApp(rateLimit({ limit, window }));
+    const interval = 100;
+    const app = createWebApp(rateLimit({ limit, interval }));
 
-    const mockRequest = request(app)
+    request(app)
       .get('/')
       .then(() => {
         const req = request(app).get('/');
         const now = Math.floor(Date.now() / 1000);
-        const expectRetryAfter = Math.max(Math.floor(limit / window), window);
+        const expectRetryAfter = interval;
         const expectedRest = now + expectRetryAfter;
         req
           .expect('Retry-After', expectRetryAfter.toString())
@@ -58,19 +52,19 @@ describe('rate-limit middleware', () => {
       });
   });
 
-  it('should response succes after refill token', function(done) {
+  it('should response content when next request is available', function(done) {
     const limit = 60;
-    const window = 60;
-    const app = createWebApp(rateLimit({ limit, window }));
+    const interval = 60;
+    const app = createWebApp(rateLimit({ limit, interval }));
 
-    const mockRequest = request(app)
+    request(app)
       .get('/')
       .then(
         setTimeout(() => {
-          const req = request(app).get('/');
           const expectedLimit = limit;
-          const expectRemaining = limit - 1;
-          req
+          const expectRemaining = limit - 3;
+          request(app)
+            .get('/')
             .expect('X-Ratelimit-Limit', expectedLimit.toString())
             .expect('X-Ratelimit-Remaining', expectRemaining.toString())
             .expect(200, /response!/)
@@ -79,25 +73,22 @@ describe('rate-limit middleware', () => {
       );
   });
 
-  it('should response correct Retry-After when leak token', function(done) {
+  it('should set correct Retry-After when token not available', function(done) {
     const limit = 2;
-    const window = 1;
-    const app = createWebApp(rateLimit({ limit, window }));
+    const interval = 1;
+    const app = createWebApp(rateLimit({ limit, interval }));
 
-    const mockRequest = request(app)
+    request(app)
       .get('/')
       .then(() => {
         request(app)
           .get('/')
           .then(() => {
-            const req = request(app).get('/');
             const now = Math.floor(Date.now() / 1000);
-            const expectRetryAfter = Math.min(
-              Math.floor(limit / window),
-              window
-            );
+            const expectRetryAfter = interval;
             const expectedRest = now + expectRetryAfter;
-            req
+            request(app)
+              .get('/')
               .expect('Retry-After', expectRetryAfter.toString())
               .expect('X-Ratelimit-Reset', expectedRest.toString())
               .expect(res => {
