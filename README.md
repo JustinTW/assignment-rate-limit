@@ -29,31 +29,38 @@ cd assignment-rate-limit
 - Method 1: using docker-compose
 
 ```
-mkdir -p .docker/data/redis
-chmod 777 .docker/data/redis
+# create docker network
 docker network create assignment-rate-limit
 
+# boot up redis and web server
 env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
   docker-compose -f docker-compose.yml up --build -d
+
+# attach to web container
 docker exec -it web bash
 ```
 
-- Method 2 (recommand): using GUN Makefile
+- Method 2 (recommand): using makefile
 
 ```
+# boot up redis and web server
 make up
+
+# attach web server
 make at
 ```
 
 ### Install dependencies
 
 ```
+# make sure you are in ./src directory
 yarn
 ```
 
 ### Run Test
 
 ```
+# make sure you are in ./src directory
 yarn test
 ```
 
@@ -75,3 +82,4 @@ After service start, you can open your web app in a browser via: http://localhos
 
 - generator-express: https://github.com/petecoop/generator-express
 - express middleware: https://expressjs.com/zh-tw/guide/writing-middleware.html
+- Redis Commands: https://redis.io/commands
