@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   res.render('index', {
     title: 'rate-limit-demo',
     remaining: req.rateLimit.remaining,
-    key: req.ip,
+    key: req.rateLimit.key,
     count: req.rateLimit.count
   });
 });

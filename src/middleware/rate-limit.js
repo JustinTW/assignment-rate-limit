@@ -18,7 +18,8 @@ const RateLimit = options => {
     });
 
   const rateLimit = (req, res, next) => {
-    options.limiter.consume(req.ip, (err, remaining) => {
+    const key = req.ip;
+    options.limiter.consume(key, (err, remaining) => {
       const now = Math.floor(Date.now() / 1000);
       if (err) {
         return next(err);
@@ -36,6 +37,7 @@ const RateLimit = options => {
         limit,
         interval,
         remaining,
+        key,
         count
       };
       res.setHeader('X-RateLimit-Limit', limit);
