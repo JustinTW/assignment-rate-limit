@@ -70,7 +70,7 @@ After service start, you can open your web app in a browser via: http://localhos
 
 ```
 # make sure you are in ./src directory
-yarn test
+yarn test:coverage
 ```
 
 ### Clean environment

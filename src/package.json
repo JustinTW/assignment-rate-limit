@@ -1,5 +1,5 @@
 {
-  "name": "src",
+  "name": "assignment-rate-limit",
   "version": "0.0.1",
   "private": true,
   "main": "app.js",
