@@ -4,18 +4,20 @@ services:
   redis:
     container_name: redis
     image: redis
+    restart: always
   web:
     build:
       context: .
       dockerfile: ./.docker/Dockerfile.${DOCKER_IMG}
     image: web
+    restart: always
     container_name: web
     hostname: ${DOCKER_IMG}
     env_file:
       - ./.env/cache.env
       - ./.env/deploy.env
     ports:
-      - 3000:3000
+      - 80:3000
     volumes:
       - ./.docker/data/shared:/data/shared:rw
       - ./.docker/data/cache:/data/cache:rw
@@ -25,7 +27,7 @@ services:
       - -c
       - |
         /sbin/init-scripts/*
-        tail -f /dev/null
+        yarn start
 
 networks:
   default:
