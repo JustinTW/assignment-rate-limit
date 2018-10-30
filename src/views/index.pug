@@ -3,7 +3,15 @@ extends layout
 block content
   h1= title
   hr
-  h2 token bucket info
-  p Available token: #{remaining}
   h2 requests info
-  p Number of requests: #{count}
+  p
+    b Number of requests:
+    span#count #{count}
+  p
+    b Request from:
+    span#key #{key}
+  h2 token bucket info
+  p
+    b Available token:
+    span#remaning #{remaining}
+

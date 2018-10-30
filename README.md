@@ -26,13 +26,13 @@ cd assignment-rate-limit
 
 ### Boot up and attach develop environment
 
-- Method 1: using docker-compose
+- Method 1: docker and docker-compose
 
 ```
 # create docker network
 docker network create assignment-rate-limit
 
-# boot up redis and web server
+# boot up redis and web container
 env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
   docker-compose -f docker-compose.yml up --build -d
 
@@ -40,13 +40,13 @@ env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
 docker exec -it web bash
 ```
 
-- Method 2 (recommand): using makefile
+- Method 2 (recommand): makefile
 
 ```
-# boot up redis and web server
+# boot up redis and web container
 make up
 
-# attach web server
+# attach web container
 make at
 ```
 
@@ -60,23 +60,39 @@ yarn
 ### Run Apps
 
 ```
-# make sure you are in ./src directory, and redis:6379 is reachable
+# make sure you are in ./src directory and redis:6379 is reachable
 yarn start
 ```
+
+After service start, you can open your web app in a browser via: http://localhost:3000
 
 ### Run Test
 
 ```
 # make sure you are in ./src directory
-yarn test
+yarn test:coverage
 ```
 
-After service start, you can open your web app in a browser via: http://localhost:3000
+### Clean environment
+
+- Method 1: docker command
+
+```
+docker kill redis web; docker rm redis web
+docker rmi redis web
+docker network rm assignment-rate-limit
+```
+
+- Method 2: makefile
+
+```
+make stop
+```
 
 ## Stack
 
 - Express@4.16.3
-- Redis
+- Redis Server@5.0.0
 - Mocha@4.0.1
 
 ## Reference
