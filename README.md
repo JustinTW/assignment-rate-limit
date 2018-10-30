@@ -5,6 +5,8 @@
 
 An implementation of rate limit on Express framework using **token bucket** algorithms backed by **Redis** database.
 
+For more detailed information please check [Wiki](https://github.com/JustinTW/assignment-rate-limit/wiki)
+
 ## Screenshot
 
 ![Screenshot](/docs/screenshot.png?raw=true 'Rate Limit Demo Screenshot')
