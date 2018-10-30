@@ -14,3 +14,11 @@ block content
   p
     b Available token:
     span#remaning #{remaining}
+
+
+  script(async='', src='https://www.googletagmanager.com/gtag/js?id=UA-128384028-1')
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-128384028-1');
