@@ -32,7 +32,7 @@ cd assignment-rate-limit
 # create docker network
 docker network create assignment-rate-limit
 
-# boot up redis and web server
+# boot up redis and web container
 env $(cat .env/deploy.env .env/config.env | grep -v ^# | xargs) \
   docker-compose -f docker-compose.yml up --build -d
 
@@ -43,10 +43,10 @@ docker exec -it web bash
 - Method 2 (recommand): makefile
 
 ```
-# boot up redis and web server
+# boot up redis and web container
 make up
 
-# attach web server
+# attach web container
 make at
 ```
 
@@ -60,7 +60,7 @@ yarn
 ### Run Apps
 
 ```
-# make sure you are in ./src directory, and redis:6379 is reachable
+# make sure you are in ./src directory and redis:6379 is reachable
 yarn start
 ```
 
