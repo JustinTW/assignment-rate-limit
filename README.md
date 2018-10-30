@@ -57,17 +57,18 @@ make at
 yarn
 ```
 
+### Run Apps
+
+```
+# make sure you are in ./src directory, and redis:6379 is reachable
+yarn start
+```
+
 ### Run Test
 
 ```
 # make sure you are in ./src directory
 yarn test
-```
-
-### Run Apps
-
-```
-yarn start
 ```
 
 After service start, you can open your web app in a browser via: http://localhost:3000
